@@ -73,7 +73,7 @@ bot.sendMessage({
 });
 }
 
-//Check for youtube links so that "watch" doesn't get flagged for wat.
+//Occasionally responds to emotes with the same emote.
 var splitMessage = message.split(':');
 if(splitMessage[1] != null && !splitMessage[1].includes("youtube.com"))
 {
