@@ -4,7 +4,6 @@ var logger = require('winston');
 var auth = require('./auth.json');
 var fs = require('fs');
 
-console.log(variables.dornsPath);
 //Variables could be cleaned up with Database implementation
 
 var check = ["Thats almost like the screenshot I have of VoW. When you get to the second boss, the floor under you has doors that all have computer coding names.", "darkmare", "wat", "wot", "wut"];
@@ -73,7 +72,7 @@ bot.sendMessage({
 });
 }
 
-//Check for youtube links so that "watch" doesn't get flagged for wat.
+//Occasionally responds to emotes with the same emote.
 var splitMessage = message.split(':');
 if(splitMessage[1] != null && !splitMessage[1].includes("youtube.com") && splitMessage[2] != null)
 {
