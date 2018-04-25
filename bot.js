@@ -75,7 +75,7 @@ bot.sendMessage({
 
 //Check for youtube links so that "watch" doesn't get flagged for wat.
 var splitMessage = message.split(':');
-if(splitMessage[1] != null && !splitMessage[1].includes("youtube.com"))
+if(splitMessage[1] != null && !splitMessage[1].includes("youtube.com") && splitMessage[2] != null)
 {
 	if(Math.floor(Math.random()*4) > 2)
 		{
