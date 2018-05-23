@@ -79,6 +79,10 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 					to: channelID,
 					message: ":" + splitMessage[1] + ":"
 				});
+				dornsCount++;
+				fs.writeFile(dornsPath, dornsCount, (err) => {
+					if (err) throw err;
+				});
 			}
 		}
 
@@ -112,6 +116,10 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 						message: ":smirk:"
 					});
 					botCount = Math.floor(Math.random() * 5);
+					dornsCount++;
+				fs.writeFile(dornsPath, dornsCount, (err) => {
+					if (err) throw err;
+				});
 				}
 				else {
 					botCount--;
