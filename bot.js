@@ -15,8 +15,10 @@ var renCountFace = 0;
 var renData;
 var dornsCount = 0;
 var botCount = Math.floor(Math.random() * 5);
-
-
+var firstLine = "";
+var firstSender = "";
+var out;
+var late;
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -58,9 +60,70 @@ bot.setPresence({
 bot.on('message', function (user, userID, channelID, message, evt) {
 	// Our bot needs to know if it will execute a command
 	// It will listen for messages that will start with `!`
+	if (message.includes("!out")) {
+		out = (fs.readFileSync(variables.calPath, 'utf-8')).split(/\r?\n/);
+		var msg;
+		for(i = 0; i < out.length; i++)
+		{
+			if(out[i].split(",")[1] == "out")
+			{
+				msg+=out[i].split(",")[0];
+				msg+="\n";
+			}
+		}
+		bot.sendMessage({
+			to: channelID,
+			message: msg
+		});
+	}
 
+	if (message.includes("!late")) {
+		out = (fs.readFileSync(variables.calPath, 'utf-8')).split(/\r?\n/);
+		var msg;
+		for(i = 0; i < out.length; i++)
+		{
+			if(out[i].split(",")[1] == "late")
+			{
+				msg+=out[i].split(",")[0];
+				msg+="\n";
+			}
+		}
+		bot.sendMessage({
+			to: channelID,
+			message: msg
+		});
+	}
 	//Make sure watbot did not send the message
 	if (user != "wat") {
+
+
+		/*if(message.split(" ")[0] == "out")
+		{
+			if(!message.split(" ")[1][0].isNaN())
+		}*/
+		//Check for duplicate "meme" messages
+		if(firstLine == "")
+		{
+			firstLine = message;
+			firstSender = user;
+		}
+		else
+		{
+			if(message == firstLine && firstSender != user)
+			{
+				firstLine = "";
+				firstSender = "";
+				bot.sendMessage({
+					to: channelID,
+					message: message
+				});
+			}
+			else
+			{
+			firstLine = message
+			firstSender = user
+			}
+		}
 
 		//Check if warcraftlogs are linked and respond with wowanalzyer link
 		if (message.includes("warcraftlogs.com")) {
@@ -78,10 +141,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 				bot.sendMessage({
 					to: channelID,
 					message: ":" + splitMessage[1] + ":"
-				});
-				dornsCount++;
-				fs.writeFile(dornsPath, dornsCount, (err) => {
-					if (err) throw err;
 				});
 			}
 		}
@@ -116,10 +175,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 						message: ":smirk:"
 					});
 					botCount = Math.floor(Math.random() * 5);
-					dornsCount++;
-				fs.writeFile(dornsPath, dornsCount, (err) => {
-					if (err) throw err;
-				});
 				}
 				else {
 					botCount--;
@@ -194,6 +249,13 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 				bot.sendMessage({
 					to: channelID,
 					message: "Oh, hi!"
+				});
+			}
+
+			if (message.includes("!altra")) {
+				bot.sendMessage({
+					to: channelID,
+					message: "Hail the creator!"
 				});
 			}
 			/*Checks each of the strings in the check array for a match with the received message
