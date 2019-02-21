@@ -1,5 +1,5 @@
 var variables = require('./variables');
-var Discord = require('discord.io');
+var Discord = require('discord.js');
 var logger = require('winston');
 var auth = require('./auth.json');
 var fs = require('fs');
@@ -26,41 +26,38 @@ logger.add(logger.transports.Console, {
 	colorize: true
 });
 logger.level = 'debug';
+
 // Initialize Discord Bot
-var bot = new Discord.Client({
-	token: auth.token,
-	autorun: true
-});
+const bot = new Discord.Client();
 
 /*When Bot is initialized
  * Create connection with username and set variables to file data
  */
 
-bot.on('ready', function (evt) {
-	logger.info('Connected');
-	logger.info('Logged in as: ');
-	logger.info(bot.username + ' - (' + bot.id + ')');
+
+bot.once('ready', () => {
 	renData = (fs.readFileSync(variables.renPath, 'utf-8')).split("/");
 	renCountWat = renData[0];
 	renCountQuestion = renData[1];
 	renCountFace = renData[2];
 	dornsCount = (fs.readFileSync(variables.dornsPath, 'utf-8'));
+	bot.user.setPresence({game:{name:"THE OG"}, status:"online"});
+	logger.info('Connected');
+	logger.info('Logged in as: ');
+	logger.info(bot.user + ' - (' + bot.user.id + ')');
 });
 
 //Creates the 'Playing' message
-bot.setPresence({
-	game: {
-		name: "The OG"
-	}
-});
+
 
 /*Reads in messages from chat and decides upon responses
  * Will check who the user is and the message for various things detailed below.
  */
-bot.on('message', function (user, userID, channelID, message, evt) {
+bot.on("message", message => {
 	// Our bot needs to know if it will execute a command
 	// It will listen for messages that will start with `!`
-	if (message.includes("!out")) {
+	/*
+	if (content.includes("!out")) {
 		out = (fs.readFileSync(variables.calPath, 'utf-8')).split(/\r?\n/);
 		var msg;
 		for(i = 0; i < out.length; i++)
@@ -71,13 +68,13 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 				msg+="\n";
 			}
 		}
-		bot.sendMessage({
+		bot.send({
 			to: channelID,
-			message: msg
+			content: msg
 		});
 	}
 
-	if (message.includes("!late")) {
+	if (content.includes("!late")) {
 		out = (fs.readFileSync(variables.calPath, 'utf-8')).split(/\r?\n/);
 		var msg;
 		for(i = 0; i < out.length; i++)
@@ -88,205 +85,186 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 				msg+="\n";
 			}
 		}
-		bot.sendMessage({
+		bot.send({
 			to: channelID,
-			message: msg
+			content: msg
 		});
-	}
-	//Make sure watbot did not send the message
-	if (user != "wat") {
+	}*/
+	//Make sure watbot did not send the content
+	if (!message.author.bot) {
 
 
-		/*if(message.split(" ")[0] == "out")
+		/*if(content.split(" ")[0] == "out")
 		{
-			if(!message.split(" ")[1][0].isNaN())
+			if(!content.split(" ")[1][0].isNaN())
 		}*/
-		//Check for duplicate "meme" messages
+		//Check for duplicate "meme" contents
 		if(firstLine == "")
 		{
-			firstLine = message;
-			firstSender = user;
+			firstLine = message.content;
+			firstSender = message.author.id;
 		}
 		else
 		{
-			if(message == firstLine && firstSender != user)
+			if(message.content == firstLine && firstSender != message.author.id)
 			{
 				firstLine = "";
 				firstSender = "";
-				bot.sendMessage({
-					to: channelID,
-					message: message
-				});
+				message.channel.send(
+					message.content
+				);
 			}
 			else
 			{
-			firstLine = message
-			firstSender = user
+			firstLine = message.content
+			firstSender = message.author.id
 			}
 		}
 
 		//Check if warcraftlogs are linked and respond with wowanalzyer link
-		if (message.includes("warcraftlogs.com")) {
-			var checklogs = message.split("/");
-			bot.sendMessage({
-				to: channelID,
-				message: "https://www.wowanalyzer.com/report/" + checklogs[4]
-			});
+		if (message.content.includes("warcraftlogs.com")) {
+			var index = message.content.indexOf("https://www.warcraftlogs.com/reports/");
+			var msg = message.content.substring(index + 37, message.content.length-1);
+			message.channel.send("https://www.wowanalyzer.com/report/" + msg
+			);
 		}
 
 		//Occasionally responds to emotes with the same emote.
-		var splitMessage = message.split(':');
-		if (splitMessage[1] != null && !splitMessage[1].includes("youtube.com") && splitMessage[2] != null) {
+		var splitcontent = message.content.split(':');
+		if (splitcontent[1] != null && !splitcontent[1].includes("youtube.com") && splitcontent[2] != null) {
 			if (Math.floor(Math.random() * 4) > 2) {
-				bot.sendMessage({
-					to: channelID,
-					message: ":" + splitMessage[1] + ":"
-				});
+				message.channel.send(":" + splitcontent[1] + ":");
 			}
 		}
 
-		if (user != "wat") {
 			/*Checks Rennacs statements for wats, ?, or :/
 			 * If found, will increment counts for !rennac response
 			 * Will store counts in file
 			 */
-			if (userID == "238512398036631555") {
-				if (message == "wat" || message == "Wat") {
+			if (message.author.id == "238512398036631555") {
+				if (message.content == "wat" || message.content == "Wat") {
 					renCountWat++;
 				}
 
-				else if (message == "?") {
+				else if (message.content == "?") {
 					renCountQuestion++;
 				}
-				else if (message == ":/") {
+				else if (message.content == ":/") {
 					renCountFace++;
 				}
 				fs.writeFile(variables.renPath, renCountWat + "/" + renCountQuestion + "/" + renCountFace, (err) => {
 					if (err) throw err;
 				});
 			}
-			/*Checks if message came from multbank
+			/*Checks if content came from multbank
 			 * Base on count, will respond with a smirk
 			 */
-			if (userID == "265161580201771010") {
+			if (message.author.id == "265161580201771010") {
 				if (botCount == 0) {
-					bot.sendMessage({
-						to: channelID,
-						message: ":smirk:"
-					});
+					message.channel.send(":smirk:"
+					);
 					botCount = Math.floor(Math.random() * 5);
 				}
 				else {
 					botCount--;
 				}
 			}
-			/*Checks for !rennac message
+			/*Checks for !rennac content
 			 * Responds with his counts
 			 */
-			if (message.includes("!rennac")) {
-				bot.sendMessage({
-					to: channelID,
-					message: renCountWat + " wats | " + renCountQuestion + " ?'s | " + renCountFace + " :/ 's "
-				});
+			if (message.content.includes("!rennac")) {
+				message.channel.send(renCountWat + " wats | " + renCountQuestion + " ?'s | " + renCountFace + " :/ 's "
+				);
 			}
 			//Roll functionality (currently off per request)
-			/*if(message.includes("!roll"))
+			/*if(content.includes("!roll"))
 				{
-				bot.sendMessage({
+				bot.send({
 					to:channelID,
-					message: ":game_die: Rolled: " + Math.floor(Math.random()*101)
+					content: ":game_die: Rolled: " + Math.floor(Math.random()*101)
 				});
 				}*/
-			/*Checks for !dorns message
+			/*Checks for !dorns content
 			 * responds with number of responses to dorns
 			 */
-			if (message.includes("!dorns")) {
-				bot.sendMessage({
-					to: channelID,
-					message: "I have responded to Dorns " + dornsCount + " times... <3 Dorns"
-				});
+			if (message.content.includes("!dorns")) {
+				message.channel.send("I have responded to Dorns " + dornsCount + " times... <3 Dorns"
+				);
 			}
-			/*Checks for !cad message
+			/*Checks for !cad content
 			 * Responds with statement
 			 */
-			if (message.includes("!cad")) {
-				bot.sendMessage({
-					to: channelID,
-					message: "Cad? I don't see what the fuss is about... He's basically another Kardis"
-				});
+			if (message.content.includes("!cad")) {
+				message.channel.send("Cad? I don't see what the fuss is about... He's basically another Kardis"
+				);
 			}
-			/*Checks for !q message
+			/*Checks for !q content
 			 * Responds with statement
 			 */
-			if (message.includes("!q")) {
-				bot.sendMessage({
-					to: channelID,
-					message: "Did someone say crayons!?"
-				});
+			if (message.content.includes("!q")) {
+				message.channel.send("Did someone say crayons!?"
+				);
 			}
-			/*Checks for !ferdy message
+			/*Checks for !ferdy content
 			 * Responds with statement
 			 */
-			if (message.includes("!ferdy")) {
-				bot.sendMessage({
-					to: channelID,
-					message: "*dies*"
-				});
+			if (message.content.includes("!ferdy")) {
+				message.channel.send("*dies*"
+				);
 			}
-			/*Checks for !raduk message
+			/*Checks for !raduk content
 			 * Responds with statement
 			 */
-			if (message.includes("!raduk")) {
-				bot.sendMessage({
-					to: channelID,
-					message: "Put me in coach!"
-				});
+			if (message.content.includes("!raduk")) {
+				message.channel.send("Put me in coach!"
+				);
 			}
-			/*Checks for !wat message
+			/*Checks for !wat content
 			 * Responds with statement
 			 */
-			if (message.includes("!wat")) {
-				bot.sendMessage({
-					to: channelID,
-					message: "Oh, hi!"
-				});
+			if (message.content.includes("!wat")) {
+				message.channel.send("Oh, hi!"
+				);
 			}
 
-			if (message.includes("!altra")) {
-				bot.sendMessage({
-					to: channelID,
-					message: "Hail the creator!"
-				});
+			if (message.content.includes("!altra")) {
+				message.channel.send("Hail the creator!"
+				);
 			}
-			/*Checks each of the strings in the check array for a match with the received message
+			/*Checks each of the strings in the check array for a match with the received content
 			 * If one is found send is set to true to indicate that a response of 'wat' can be sent
 			 */
 			for (i = 0; i < check.length; i++) {
-				if (message.toUpperCase().includes(check[i].toUpperCase())) {
+				if (message.content.toUpperCase().includes(check[i].toUpperCase())) {
 					send = true;
 				}
 			}
-			/*If a message is to be sent and the randomized count for sending the message is 0 (Meaning the message will be sent)
+			/*If a content is to be sent and the randomized count for sending the content is 0 (Meaning the content will be sent)
 			 * And the user is Dorns, will increment his variables
 			 * 
 			 * Currently NOT WORKING
 			 */
-			if (send && userID == "273275583071518720" && count == 0) {
+			if(message.author.id == "273275583071518720"){
 				dornsCount++;
-				fs.writeFile(dornsPath, dornsCount, (err) => {
+				fs.writeFile(variables.dornsPath, dornsCount, (err) => {
+					if (err) throw err;
+				});
+				message.channel.send("**" + message.content + "**")
+			}
+
+			if (send && message.author.id == "273275583071518720" && count == 0) {
+				dornsCount++;
+				fs.writeFile(variables.dornsPath, dornsCount, (err) => {
 					if (err) throw err;
 				});
 			}
-			/*Checks if the message ends in a ?
+			/*Checks if the content ends in a ?
 			 * Avoids responses to ? in the middle of a statement
 			 */
-			if (message.substring(message.length - 1, message.length).includes("?")) {
+			if (message.content.substring(message.content.length - 1, message.content.length).includes("?")) {
 				if (count == 0) {
 					count = Math.floor(Math.random() * 11);
-					bot.sendMessage({
-						to: channelID,
-						message: ':thinking:'
-					});
+					message.channel.send(':thinking:');
 				}
 				else {
 					count--;
@@ -294,12 +272,12 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 				send = false;
 			}
 			//NYI
-			else if (userID == "") {
+			/*else if (userID == "") {
 				if (count == 0) {
 					count = Math.floor(Math.random() * 11);
-					bot.sendMessage({
+					bot.send({
 						to: channelID,
-						message: 'Listen here motherfucker.'
+						content: 'Listen here motherfucker.'
 					});
 				}
 				else {
@@ -307,7 +285,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 				}
 				send = false;
 			}
-			/*Decides whether to send the message
+			/*Decides whether to send the content
 			 * Checks that send is true, indicating that a statement has matched our checks
 			 * Checks if count is 0, indicating that we have received enough reponses to add a natural feel to the responses
 			 * 
@@ -317,10 +295,8 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 				if (count == 0) {
 					count = Math.floor(Math.random() * 11);
 					send = false;
-					bot.sendMessage({
-						to: channelID,
-						message: 'wat'
-					});
+					message.channel.send('wat'
+					);
 				}
 				else {
 					count--;
@@ -328,6 +304,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 				}
 			}
 		}
-	}
 });
 
+bot.login(auth.token);
