@@ -29,6 +29,13 @@ var late;
 var cadCount = Math.floor(Math.random() * 15);
 var curse = ["fuck", "damn", "bitch", "ass", "shit", "hate"];
 var praise = ["good", "great", "love", "thanks", "thx"];
+var botCount = Math.floor(Math.random() * 5);
+var firstLine = "";
+var firstSender = "";
+var out;
+var late;
+
+>>>>>>> 430f91c7a1a23e696b0297c4ae8a66cf9c188a95
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -103,6 +110,35 @@ bot.on("message", message => {
 	if (!message.author.bot) {
 
 
+
+		/*if(content.split(" ")[0] == "out")
+		{
+			if(!content.split(" ")[1][0].isNaN())
+		}*/
+		//Check for duplicate "meme" contents
+		if(firstLine == "")
+		{
+			firstLine = message.content;
+			firstSender = message.author.id;
+		}
+		else
+		{
+			if(message.content == firstLine && firstSender != message.author.id)
+			{
+				firstLine = "";
+				firstSender = "";
+				message.channel.send(
+					message.content
+				);
+			}
+			else
+			{
+			firstLine = message.content
+			firstSender = message.author.id
+			}
+		}
+
+
 		/*if(content.split(" ")[0] == "out")
 		{
 			if(!content.split(" ")[1][0].isNaN())
@@ -146,7 +182,11 @@ bot.on("message", message => {
 		//Check if warcraftlogs are linked and respond with wowanalzyer link
 		if (message.content.includes("warcraftlogs.com")) {
 			var index = message.content.indexOf("https://www.warcraftlogs.com/reports/");
+
 			var msg = message.content.substring(index + 37);
+
+			var msg = message.content.substring(index + 37, message.content.length-1);
+
 			message.channel.send("https://www.wowanalyzer.com/report/" + msg
 			);
 		}
@@ -164,11 +204,16 @@ bot.on("message", message => {
 		}
 		//Occasionally responds to emotes with the same emote.
 		var splitcontent = message.content.split(':');
+
 		if (splitcontent[1] != null && !splitcontent[1].includes(".com") && splitcontent[2] != null) {
+
+		if (splitcontent[1] != null && !splitcontent[1].includes("youtube.com") && splitcontent[2] != null) {
+
 			if (Math.floor(Math.random() * 4) > 2) {
 				message.channel.send(":" + splitcontent[1] + ":");
 			}
 		}
+
 		/*
 		if(!message.content.includes("www") && !message.content.includes("http") && sexTape == 0)
 		{
@@ -222,6 +267,8 @@ bot.on("message", message => {
 		{
 			snark--;
 		}
+
+
 			/*Checks Rennacs statements for wats, ?, or :/
 			 * If found, will increment counts for !rennac response
 			 * Will store counts in file
@@ -255,6 +302,7 @@ bot.on("message", message => {
 				}
 			}
 
+
 			/*if(message.author.id == "201851037315760128") {
 				if(cadCount == 0) {
 					message.channel.send("HEY MAGE, WHERE'S MY TABLE?");
@@ -274,17 +322,20 @@ bot.on("message", message => {
 			{
 				simCount--;
 			}
+
 			/*Checks for !rennac content
 			 * Responds with his counts
 			 */
 			if (message.content.includes("!rennac")) {
 				message.channel.send(renCountWat + " wats | " + renCountQuestion + " ?'s | " + renCountFace + " :/ 's "
 				);
+
 			}
 
 			if (message.content.includes("!monkgirl")) {
 				message.channel.send("Our middle child said he wanted a donut instead of cake for his bday (he is 7 today) I did not disappint"
 				);
+
 			}
 			//Roll functionality (currently off per request)
 			/*if(content.includes("!roll"))
@@ -298,12 +349,16 @@ bot.on("message", message => {
 			 * responds with number of responses to dorns
 			 */
 			if (message.content.includes("!dorns")) {
-				message.channel.send("Dorns watch out!"
+
+			message.channel.send("Dorns watch out!"
+			message.channel.send("I have responded to Dorns " + dornsCount + " times... <3 Dorns"
+
 				);
 			}
 			/*Checks for !cad content
 			 * Responds with statement
 			 */
+
 			if(message.content.includes("!rhaast"))
 			{
 				message.channel.send("jajaja");
@@ -311,6 +366,12 @@ bot.on("message", message => {
 			if (message.content.includes("!cad")) {
 					message.channel.send("HEY MAGE, WHERE'S MY TABLE?");
 			}
+
+			if (message.content.includes("!cad")) {
+				message.channel.send("Cad? I don't see what the fuss is about... He's basically another Kardis"
+				);
+			}
+
 			/*Checks for !q content
 			 * Responds with statement
 			 */
@@ -338,6 +399,7 @@ bot.on("message", message => {
 			if (message.content.includes("!wat")) {
 				message.channel.send("Oh, hi!"
 				);
+
 			}
 
 			if (message.content.includes("!altra")) {
@@ -367,7 +429,6 @@ bot.on("message", message => {
 				message.channel.send("Waytotem"
 				);
 			}
-			
 
 			if (message.content.includes("!kardis")) {
 				message.channel.send(":/"
@@ -388,9 +449,16 @@ bot.on("message", message => {
 				message.channel.send("Yiff in hell!"
 				);
 			}
-			
 			if (message.content.includes("!itavian")) {
 				message.channel.send("Tentacle daddy, watch me Holy Shock!"
+				);
+			}
+
+
+			}
+
+			if (message.content.includes("!altra")) {
+				message.channel.send("Hail the creator!"
 				);
 			}
 
@@ -407,13 +475,21 @@ bot.on("message", message => {
 			 * 
 			 * Currently NOT WORKING
 			 */
+
 			/*if(message.author.id == "273275583071518720"){
+
+			if(message.author.id == "273275583071518720"){
+
 				dornsCount++;
 				fs.writeFile(variables.dornsPath, dornsCount, (err) => {
 					if (err) throw err;
 				});
 				message.channel.send("**" + message.content + "**")
+
 			}*/
+
+			}
+
 
 			if (send && message.author.id == "273275583071518720" && count == 0) {
 				dornsCount++;
