@@ -11,7 +11,6 @@ const beans = ["https://tenor.com/view/crazy-eyes-kid-pork-and-beans-beans-gif-1
 var send = false;
 var count = Math.floor(Math.random() * 11);
 var dornsCount = 0;
-var botCount = Math.floor(Math.random() * 25);
 var simCount = Math.floor(Math.random() * 5 + 5)
 var firstLine = "";
 var firstSender = "";
@@ -24,10 +23,10 @@ var praise = ["good", "great", "love", "thanks", "thx"];
 // Configure logger settings
 
 
-// Initialize Discord Bot
-const bot = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+// Initialize Discord client
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
-bot.commands = new Collection();
+client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -56,20 +55,20 @@ for (const file of eventFiles) {
 	}
 }
 
-/*When Bot is initialized
+/*When client is initialized
  * Create connection with username and set variables to file data
  */
 
-bot.once('ready', () => {
+client.once('ready', () => {
 	dornsCount = (fs.readFileSync(variables.dornsPath, 'utf-8'));
-	bot.user.setPresence({game:{name:"THE OG"}, status:"online"});
+	client.user.setPresence({game:{name:"THE OG"}, status:"online"});
 });
 
 
 /*Reads in messages from chat and decides upon responses
  * Will check who the user is and the message for various things detailed below.
  */
-bot.on("messageCreate", function(message) {
+client.on("messageCreate", function(message) {
 	if (!message.author.bot) {
 
 
@@ -112,7 +111,7 @@ bot.on("messageCreate", function(message) {
 		{
 			message.channel.send(":smile:")
 		}
-	}
+		}
 		//Check if warcraftlogs are linked and respond with wowanalzyer link
 		if (message.content.includes("warcraftlogs.com")) {
 			var index = message.content.indexOf("https://www.warcraftlogs.com/reports/");
@@ -142,7 +141,7 @@ bot.on("messageCreate", function(message) {
 		if(message.content.includes("forum") && forumCount == 0)
 		{
 			forumCount = Math.floor(Math.random()*11);
-			message.channel.send("The forums is not only a great place to get your suggestion seen, but it is also a great place to get support from fellow players to both uplift your voice and help refine your message. Like a single candle in a dark room one voice can only accomplish so much. Five, ten, fifty thousand voices can change the World... of Warcraft");
+			message.channel.send("The forums is not only a great place to get your suggestion seen, but it is also a great place to get support from fellow players to clienth uplift your voice and help refine your message. Like a single candle in a dark room one voice can only accomplish so much. Five, ten, fifty thousand voices can change the World... of Warcraft");
 		}
 		else if(message.content.includes("forum"))
 		{
@@ -208,19 +207,7 @@ bot.on("messageCreate", function(message) {
 					if (err) throw err;
 				});
 			}
-			/*Checks if content came from multbank
-			 * Base on count, will respond with a smirk
-			 */
-			if (message.author.id == "265161580201771010") {
-				if (botCount == 0) {
-					message.channel.send(":smirk:"
-					);
-					botCount = Math.floor(Math.random() * 5);
-				}
-				else {
-					botCount--;
-				}
-			}
+
 
 			/*if(message.author.id == "201851037315760128") {
 				if(cadCount == 0) {
@@ -261,20 +248,6 @@ bot.on("messageCreate", function(message) {
 					if (err) throw err;
 				});
 			}
-			/*Checks if the content ends in a ?
-			 * Avoids responses to ? in the middle of a statement
-			 */
-			if (message.content.substring(message.content.length - 1, message.content.length).includes("?")) {
-				if (count == 0) {
-					count = Math.floor(Math.random() * 11);
-					message.channel.send(':thinking:');
-				}
-				else {
-					count--;
-				}
-				send = false;
-			}
-			
 			if (message.content.includes("!dorns")) {
 				message.channel.send("Dorns watch out!"
 				);
@@ -357,6 +330,21 @@ bot.on("messageCreate", function(message) {
 			if (message.content.includes("!beans")) {
 				message.channel.send(beans[Math.floor(Math.random()*5)]);
 			}
+			/*Checks if the content ends in a ?
+			 * Avoids responses to ? in the middle of a statement
+			 */
+			if (message.content.substring(message.content.length - 1, message.content.length).includes("?")) {
+				if (count == 0) {
+					count = Math.floor(Math.random() * 11);
+					message.channel.send(':thinking:');
+				}
+				else {
+					count--;
+				}
+				send = false;
+			}
+			
+
 
 			/*Decides whether to send the content
 			 * Checks that send is true, indicating that a statement has matched our checks
@@ -379,4 +367,4 @@ bot.on("messageCreate", function(message) {
 		}
 });
 
-bot.login(token);
+client.login(token);
