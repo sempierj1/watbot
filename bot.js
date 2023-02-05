@@ -1,12 +1,13 @@
 var variables = require('./variables');
-var Discord = require('discord.js');
-var logger = require('winston');
+const { Client, GatewayIntentBits } = require('discord.js');
 var auth = require('./auth.json');
 var fs = require('fs');
 
 //Variables could be cleaned up with Database implementation
 
 var check = ["Thats almost like the screenshot I have of VoW. When you get to the second boss, the floor under you has doors that all have computer coding names.", "darkmare", "wat", "wot", "wut"];
+var beans = ["https://tenor.com/view/crazy-eyes-kid-pork-and-beans-beans-gif-19099849", "https://tenor.com/view/beans-tommy-ann-margaret-the-who-gif-17812511","https://tenor.com/view/food-beans-cook-soup-gif-7312038","https://tenor.com/view/time-for-beans-good-mythical-morning-good-morning-gif-12223772","https://tenor.com/view/rove-beans-baked-beans-bean-bath-messy-gif-19055038"];
+var beanCount = 0;
 var send = false;
 var count = Math.floor(Math.random() * 11);
 var renCountWat = 0;
@@ -20,24 +21,20 @@ var simCount = Math.floor(Math.random() * 5 + 5)
 var firstLine = "";
 var firstSender = "";
 var snarkCount = 20;
-var sexCount = 25;
 var snark = Math.floor(Math.random()*snarkCount+100);
-var sexTape = Math.floor(Math.random()*sexCount+125);
+var forumCount = Math.floor(Math.random()*11);
 var replied = false;
 var out;
 var late;
+//const update = new Client.RichEmbed().setImage("https://cdn.discordapp.com/attachments/775208042711089192/789123958082764830/unknown.png");
 var cadCount = Math.floor(Math.random() * 15);
 var curse = ["fuck", "damn", "bitch", "ass", "shit", "hate"];
 var praise = ["good", "great", "love", "thanks", "thx"];
 // Configure logger settings
-logger.remove(logger.transports.Console);
-logger.add(logger.transports.Console, {
-	colorize: true
-});
-logger.level = 'debug';
+
 
 // Initialize Discord Bot
-const bot = new Discord.Client();
+const bot = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
 /*When Bot is initialized
  * Create connection with username and set variables to file data
@@ -51,9 +48,6 @@ bot.once('ready', () => {
 	renCountFace = renData[2];
 	dornsCount = (fs.readFileSync(variables.dornsPath, 'utf-8'));
 	bot.user.setPresence({game:{name:"THE OG"}, status:"online"});
-	logger.info('Connected');
-	logger.info('Logged in as: ');
-	logger.info(bot.user + ' - (' + bot.user.id + ')');
 });
 
 //Creates the 'Playing' message
@@ -62,7 +56,7 @@ bot.once('ready', () => {
 /*Reads in messages from chat and decides upon responses
  * Will check who the user is and the message for various things detailed below.
  */
-bot.on("message", message => {
+bot.on("messageCreate", function(message) {
 	// Our bot needs to know if it will execute a command
 	// It will listen for messages that will start with `!`
 	/*
@@ -100,6 +94,10 @@ bot.on("message", message => {
 		});
 	}*/
 	//Make sure watbot did not send the content
+	if(message.channel.id == "882677154410791013" && message.content ==  "!roll")
+	{
+		message.channel.send(Math.floor(Math.random()*100)+1);
+	}
 	if (!message.author.bot) {
 
 
@@ -147,7 +145,7 @@ bot.on("message", message => {
 		if (message.content.includes("warcraftlogs.com")) {
 			var index = message.content.indexOf("https://www.warcraftlogs.com/reports/");
 			var msg = message.content.substring(index + 37);
-			message.channel.send("https://www.wowanalyzer.com/report/" + msg
+			message.reply("https://www.wowanalyzer.com/report/" + msg
 			);
 		}
 
@@ -181,6 +179,15 @@ bot.on("message", message => {
 			sexTape--;
 		}
 		*/
+		if(message.content.includes("forum") && forumCount == 0)
+		{
+			forumCount = Math.floor(Math.random()*11);
+			message.channel.send("The forums is not only a great place to get your suggestion seen, but it is also a great place to get support from fellow players to both uplift your voice and help refine your message. Like a single candle in a dark room one voice can only accomplish so much. Five, ten, fifty thousand voices can change the World... of Warcraft");
+		}
+		else if(message.content.includes("forum"))
+		{
+			forumCount--;
+		}
 		if(!message.content.includes("www") && !message.content.includes("http") && snark == 0)
 		{
 			var temp = Array.from(message.content);
@@ -282,8 +289,14 @@ bot.on("message", message => {
 				);
 			}
 
+			if (message.content.includes("!beans")) {
+				beanCount = Math.floor(Math.random()*5);
+				message.channel.send(beans[beanCount]
+				);
+			}
+
 			if (message.content.includes("!monkgirl")) {
-				message.channel.send("Our middle child said he wanted a donut instead of cake for his bday (he is 7 today) I did not disappint"
+				message.channel.send("Our middle child said he wanted a donut instead of cake for his bday (he is 7 today) I did not disappoint"
 				);
 			}
 			//Roll functionality (currently off per request)
@@ -310,6 +323,15 @@ bot.on("message", message => {
 			}
 			if (message.content.includes("!cad")) {
 					message.channel.send("HEY MAGE, WHERE'S MY TABLE?");
+			}
+
+			if (message.content.includes("!update") && message.channel.id == '775208042711089192') {
+				message.channel.send(update);
+		}
+
+			if(message.content.includes("!brodie"))
+			{
+				message.channel.send("that bot... not a fan");
 			}
 			/*Checks for !q content
 			 * Responds with statement
@@ -386,6 +408,16 @@ bot.on("message", message => {
 
 			if (message.content.includes("!dark")) {
 				message.channel.send("Yiff in hell!"
+				);
+			}
+
+			if (message.content.includes("!nail")) {
+				message.channel.send("They see me rollin"
+				);
+			}
+
+			if (message.content.includes("!mhalz")) {
+				message.channel.send("Doesn't need to see to know he's beating you in DPS"
 				);
 			}
 			
