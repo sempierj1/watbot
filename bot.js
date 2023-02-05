@@ -1,6 +1,6 @@
 var variables = require('./variables');
 const { Client, GatewayIntentBits } = require('discord.js');
-var auth = require('./auth.json');
+const {token} = require('./auth.json');
 var fs = require('fs');
 
 //Variables could be cleaned up with Database implementation
@@ -501,4 +501,4 @@ bot.on("messageCreate", function(message) {
 		}
 });
 
-bot.login(auth.token);
+bot.login(token);
