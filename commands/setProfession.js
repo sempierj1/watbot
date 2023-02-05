@@ -26,8 +26,13 @@ module.exports = {
         const user = interaction.member;
         const guild = interaction.member.guild;
         const guildRole = guild.roles.cache.find(role => role.name === roleCheck);
-        user.roles.add(guildRole);
-
-        await interaction.reply({content: `User - ${interaction.user.username} has been added to the ${guildRole.name} role.`, ephemeral: true});
+        try{
+            user.roles.add(guildRole);
+            await interaction.reply({content: `User - ${interaction.user.username} has been added to the ${guildRole.name} role.`, ephemeral: true});
+        }
+        catch (error)
+        {
+            await interaction.reply({content: `Failed to add user - ${interaction.user.username} to the ${guildRole.name} role. If this continues to fail, let Altra know.`, ephemeral: true})
+        }
     },
 };
