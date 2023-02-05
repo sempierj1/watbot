@@ -2,8 +2,8 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('setprofession')
-        .setDescription("Choose a profession to get pinged when people @ that profession.")
+        .setName('removeprofession')
+        .setDescription("Choose a profession to not get pinged when people @ that profession.")
         .addStringOption(option =>
             option.setName('profession')
             .setDescription('Professions')
@@ -27,12 +27,12 @@ module.exports = {
         const guild = interaction.member.guild;
         const guildRole = guild.roles.cache.find(role => role.name === roleCheck);
         try{
-            user.roles.add(guildRole);
-            await interaction.reply({content: `User - ${interaction.user.username} has been added to the ${guildRole.name} role.`, ephemeral: true});
+            user.roles.remove(guildRole);
+            await interaction.reply({content: `User - ${interaction.user.username} has been removed from the ${guildRole.name} role.`, ephemeral: true});
         }
         catch (error)
         {
-            await interaction.reply({content: `Failed to add user - ${interaction.user.username} to the ${guildRole.name} role. If this continues to fail, let Altra know.`, ephemeral: true})
+            await interaction.reply({content: `Failed to remove user - ${interaction.user.username} from the ${guildRole.name} role. If this continues to fail, let Altra know.`, ephemeral: true})
         }
     },
 };
