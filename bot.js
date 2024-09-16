@@ -9,14 +9,14 @@ const path = require('node:path');
 const check = ["Thats almost like the screenshot I have of VoW. When you get to the second boss, the floor under you has doors that all have computer coding names.", "darkmare", "wat", "wot", "wut"];
 const beans = ["https://tenor.com/view/crazy-eyes-kid-pork-and-beans-beans-gif-19099849", "https://tenor.com/view/beans-tommy-ann-margaret-the-who-gif-17812511","https://tenor.com/view/food-beans-cook-soup-gif-7312038","https://tenor.com/view/time-for-beans-good-mythical-morning-good-morning-gif-12223772","https://tenor.com/view/rove-beans-baked-beans-bean-bath-messy-gif-19055038"];
 var send = false;
-var count = Math.floor(Math.random() * 11);
+var count = Math.floor(Math.random() * 20 + 5);
 var dornsCount = 0;
-var simCount = Math.floor(Math.random() * 5 + 5)
+var simCount = Math.floor(Math.random() * 10 + 5)
 var firstLine = "";
 var firstSender = "";
 var snarkCount = 20;
-var snark = Math.floor(Math.random()*snarkCount+100);
-var forumCount = Math.floor(Math.random()*11);
+var snark = Math.floor(Math.random()*snarkCount+200);
+var forumCount = Math.floor(Math.random()*11+5);
 var replied = false;
 var curse = ["fuck", "damn", "bitch", "ass", "shit", "hate"];
 var praise = ["good", "great", "love", "thanks", "thx"];
@@ -140,7 +140,7 @@ client.on("messageCreate", function(message) {
 		*/
 		if(message.content.includes("forum") && forumCount == 0)
 		{
-			forumCount = Math.floor(Math.random()*11);
+			forumCount = Math.floor(Math.random()*11+5);
 			message.channel.send("The forums is not only a great place to get your suggestion seen, but it is also a great place to get support from fellow players to clienth uplift your voice and help refine your message. Like a single candle in a dark room one voice can only accomplish so much. Five, ten, fifty thousand voices can change the World... of Warcraft");
 		}
 		else if(message.content.includes("forum"))
@@ -182,7 +182,7 @@ client.on("messageCreate", function(message) {
 			}
 			message.channel.send(temp.join(''));
 			replied = true;
-			snark = Math.floor(Math.random()*snarkCount+100);
+			snark = Math.floor(Math.random()*snarkCount+200);
 		}
 		else if(!message.content.includes("www") && snark > 0)
 		{
@@ -220,7 +220,7 @@ client.on("messageCreate", function(message) {
 			}*/
 			if (message.content.includes("sim") && simCount == 0)
 			{
-				simCount = Math.floor(Math.random()*5 + 5);
+				Math.floor(Math.random() * 10 + 5)
 				message.channel.send("The guys at H2P said the sims were pretty much similar"
 				);
 			}
@@ -242,12 +242,12 @@ client.on("messageCreate", function(message) {
 			 * 
 			 * Currently NOT WORKING
 			 */
-			if (send && message.author.id == "273275583071518720" && count == 0) {
+			/*if (send && message.author.id == "273275583071518720" && count == 0) {
 				dornsCount++;
 				fs.writeFile(variables.dornsPath, dornsCount, (err) => {
 					if (err) throw err;
 				});
-			}
+			}*/
 			if (message.content.includes("!dorns")) {
 				message.channel.send("Dorns watch out!"
 				);
@@ -335,7 +335,7 @@ client.on("messageCreate", function(message) {
 			 */
 			if (message.content.substring(message.content.length - 1, message.content.length).includes("?")) {
 				if (count == 0) {
-					count = Math.floor(Math.random() * 11);
+					count = Math.floor(Math.random() * 20 + 5);
 					message.channel.send(':thinking:');
 				}
 				else {
@@ -354,7 +354,7 @@ client.on("messageCreate", function(message) {
 			 */
 			else if (send) {
 				if (count == 0) {
-					count = Math.floor(Math.random() * 11);
+					count = Math.floor(Math.random() * 20 + 5);
 					send = false;
 					message.channel.send('wat'
 					);
